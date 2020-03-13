@@ -1,8 +1,25 @@
-import sys, os, datetime, json
+import sys, os, datetime, json, mimetypes
 import SimpleHTTPServer, SocketServer
+
 
 class PortHoleHandler(SimpleHTTPServer.SimpleHTTPRequestHandler) :
     def do_GET(self) :
+        #response with static resource
+        if(not self.path.endswith("/json")) :  
+            if self.path == "/" :
+                self.path = "/index.html"
+            path = os.path.dirname(__file__) + "/static" + self.path
+            
+            self.send_response(200)
+            self.send_header("Content-type", self.guess_type(path))
+            f = open(path,"rb")
+            fs = os.fstat(f.fileno())
+            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+            self.end_headers()
+            self.copyfile(f,self.wfile)
+            f.close()
+            return
         
         outputLines = os.popen("df").read().splitlines()
         
@@ -35,22 +52,9 @@ class PortHoleHandler(SimpleHTTPServer.SimpleHTTPRequestHandler) :
             self.end_headers()
             self.wfile.write(jsonStr)
             return
-        
-        #response with text/html
-        f = open("index.html","r")
-        contents = f.read()
-        self.send_header("Content-type", "text/html")
-        self.send_header("Content-Length", len(contents))
-        #self.send_header("Last-Modified", self.date_time_string(datetime.datetime.now()))
-        self.end_headers()
-        self.wfile.write(contents)
-        f.close()
 
-
-PORT = 8000
-if len(sys.argv) > 1 :
-    PORT = int(sys.argv[1])
-print("serving at port", PORT)
-httpd = SocketServer.TCPServer(("", PORT), PortHoleHandler)
-httpd.serve_forever()
+def serve(host="", port=8000) : 
+    print("Porthole server at :[" + host + ":" +  str(port)+"]")
+    httpd = SocketServer.TCPServer((host, port), PortHoleHandler)
+    httpd.serve_forever()
 
