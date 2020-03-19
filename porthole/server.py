@@ -1,5 +1,14 @@
-import sys, os, datetime, json, mimetypes, urlparse
-import SimpleHTTPServer, SocketServer
+import sys, os, datetime, json, mimetypes 
+
+if sys.version_info.major < 3:
+    print('Python2')
+    from  urlparse import urlparse, parse_qs
+    import SocketServer
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
+else:
+    print('Python3')
+    from urllib.parse import urlparse, parse_qs
+    from http.server import SimpleHTTPRequestHandler,socketserver as SocketServer
 
 #Static resource path
 ResoursePath = os.path.dirname(__file__) + "/static"
@@ -38,15 +47,15 @@ RequestHandlers.update({"/vmstat" : vmstat})
 def onGet(path, handler) :
     RequestHandlers.update({path : handler})
 
-class PortHoleHandler(SimpleHTTPServer.SimpleHTTPRequestHandler) :
+class PortHoleHandler(SimpleHTTPRequestHandler) :
     def serve(self) :
         tmp = self.path.split("?",1)
         path = tmp[0]
         qs = tmp[1] if len(tmp) > 1 else ""
-        queryParam = urlparse.parse_qs(qs)
+        queryParam = parse_qs(qs)
 
         # respond with registered handlers
-        if RequestHandlers.has_key(path) :
+        if path in RequestHandlers :
             data = RequestHandlers.get(path)()
             contentType = "application/json"
             if data is str :
@@ -104,7 +113,7 @@ class PortHoleHandler(SimpleHTTPServer.SimpleHTTPRequestHandler) :
             self.send_header("Content-type", self.response["contentType"])
             self.send_header("Content-Length", len(self.response["data"]))          
             self.end_headers()
-            self.wfile.write(self.response["data"])
+            self.wfile.write(self.response["data"].encode())
         return
 
 def serve(host="", port=8000) : 

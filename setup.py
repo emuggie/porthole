@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/emuggie/porthole",
     packages=setuptools.find_packages(),
+    package_data = {
+        'porthole' : ['static/*.html','static/*.js','static/*.css','static/favicon.ico']
+    },
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "License :: OSI Approved :: MIT License",
