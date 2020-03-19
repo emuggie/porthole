@@ -1,5 +1,7 @@
-import sys, json, argparse, porthole
-
+import sys, json, argparse 
+from . import server
+from . import client
+    
 parser = argparse.ArgumentParser()
 subParser = parser.add_subparsers(help="command to run. -h with command shows detailed options.", dest="command")
 sP=subParser.add_parser("serve",help="host os info through http server.")
@@ -15,18 +17,18 @@ args = parser.parse_args()
 
 #porthole serve -h "" -p 8080
 if args.command == "serve" :
-    porthole.serve(args.host, args.port)
+    server.serve(args.host, args.port)
     exit(0)
 
 #porthole get "URI"
 if args.command == "get" :
-    print(json.dumps(porthole.get(args.url), indent=4))
+    print(json.dumps(client.get(args.url), indent=4))
     exit(0)
 
 #porthole check "URI" "expression"
 if args.command == "test" :
-    (ok, err) = porthole.test(args.url, args.expr)
+    (ok, err) = client.test(args.url, args.expr)
     if not ok :
         print(err)
     exit(not ok)
-    
+        

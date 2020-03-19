@@ -15,12 +15,12 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 2.7",
-        "License :: OSI Approved :: BSD 3-Clause License",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX",
     ],
-    entry_point = {
+    entry_points = {
         'console_scripts' : [
-            'run=serve'
+            'porthole=porthole.script'
         ]
     },
     python_requires='>=2.7',

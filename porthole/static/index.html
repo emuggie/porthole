@@ -12,33 +12,40 @@
             var disks;
             var $ = document.querySelector;
             window.onload = ()=>{
-                fetch("/json")
+                //fetch df result
+                fetch("/df")
                 .then(res=> res.json())
                 .then(json => {
                     data = json;
-                    cpu = data.cpu;
-                    disks = data.disks;
-                    document.querySelector("#cpuTable .key").innerHTML = "";
-                    document.querySelector("#cpuTable .value").innerHTML = "";
-                    for(key in cpu){
-                        document.querySelector("#cpuTable .key").innerHTML += "<th>"+key+"</th>";
-                        document.querySelector("#cpuTable .value").innerHTML += "<td>"+cpu[key]+"</td>";
-                    }
-
                     document.querySelector("#diskTable .key").innerHTML = "";
                     document.querySelector("#diskTable .values").innerHTML = "";
-                    for(key in disks[0]){
+                    for(key in data[0]){
                         document.querySelector("#diskTable .key").innerHTML += "<th>"+key+"</th>";
                     }
-                    for(value of disks){
+                    for(value of data){
                         document.querySelector("#diskTable .values").innerHTML += "<tr></tr>";
-                        for(key in disks[0]){
+                        for(key in data[0]){
                             document.querySelector("#diskTable .values tr:last-child").innerHTML += "<td>"+value[key]+"</td>";
                         }   
                     }
                 }).catch(error => {
                     console.error(error);
-                    alert("Failed fetching data;");
+                    alert("Failed fetching data;/df");
+                });
+                //fetch vmstat result
+                fetch("/vmstat")
+                .then(res=> res.json())
+                .then(json => {
+                    data = json;
+                    document.querySelector("#cpuTable .key").innerHTML = "";
+                    document.querySelector("#cpuTable .value").innerHTML = "";
+                    for(key in data){
+                        document.querySelector("#cpuTable .key").innerHTML += "<th>"+key+"</th>";
+                        document.querySelector("#cpuTable .value").innerHTML += "<td>"+data[key]+"</td>";
+                    }
+                }).catch(error => {
+                    console.error(error);
+                    alert("Failed fetching data;/vmstat");
                 });
             }
         </script>
