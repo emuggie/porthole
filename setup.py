@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="porthole",
+    name="porthole-cmd",
     version="0.0.1",
     author="emuggie",
     author_email="emuggie@gmail.com",

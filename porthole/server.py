@@ -1,12 +1,10 @@
 import sys, os, datetime, json, mimetypes 
 
 if sys.version_info.major < 3:
-    print('Python2')
     from  urlparse import urlparse, parse_qs
     import SocketServer
     from SimpleHTTPServer import SimpleHTTPRequestHandler
 else:
-    print('Python3')
     from urllib.parse import urlparse, parse_qs
     from http.server import SimpleHTTPRequestHandler,socketserver as SocketServer
 
